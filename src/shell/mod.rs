@@ -21,10 +21,21 @@ pub fn exec_shell(vd: &mut VirtualDisk) -> Result<(), Box<dyn std::error::Error>
         }
 
         match filtered.ok().unwrap() {
-            Command::Lsblk       => {_ = commands::lsblk::run(vd); },
-            Command::Gdisk(args) => {_ = commands::gdisk::run(vd, args); },
-            Command::Mfks(args)  => {_ = commands::mkfs::run(vd, args); },
-            Command::Ls()        => {    commands::ls::run();}
+            Command::Lsblk => {
+                let r = commands::lsblk::run(vd); 
+                if r.is_err(){ println!("lsblk: something went wrong.") }
+            },
+            Command::Gdisk(args) => {
+                if let Err(e) = commands::gdisk::run(vd, args){
+                    println!("{e}");
+                }
+            },
+            Command::Mfks(args) => {
+                if let Err(e) = commands::mkfs::run(vd, args){
+                    println!("{e}");
+                }
+            },
+            Command::Ls() => {    commands::ls::run();}
         }
     }
 
