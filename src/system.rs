@@ -1,5 +1,5 @@
 // the value is measured in bytes and it's defaulted to 2GiB.
-pub const MAX_STORAGE_CAPACITY: i64 = 2 * 1024 * 1024 * 1024;
+pub const MAX_STORAGE_CAPACITY: i64 = 128 * 1024 * 1024 * 1024;
 
 pub mod fs {
     #[derive(Clone)]
