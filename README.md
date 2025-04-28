@@ -9,3 +9,4 @@ The default virtual disk drive is `dev/sda`.
 - `gdisk <device>` enter gdisk with specified disk.
 - `mkfs <args>` format a partition. Run `mkfs -h` for more details.
 - `ls` list all available commands.
+- `exit` exit the program.
