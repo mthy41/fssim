@@ -117,7 +117,9 @@ fn add_new_partition(vd_buffer: &mut VirtualDisk, counter: &mut i32){
 
     let mut pt_size_b = String::new();
     _ = user_input(&mut pt_size_b, &"section size: ".to_string());
-
+    if pt_size_b.eq("."){
+        pt_size_b = (vd_buffer.capacity - vd_buffer.used).to_string();
+    }
     let pt_size_b = parse_mem_scale(&pt_size_b);
     if let Err(e) = pt_size_b{
         println!("{e}");
@@ -174,6 +176,7 @@ pub fn list_partitions(part_table: &[Partition]){
 
 fn create_empty_gpt(vd_buffer: &mut VirtualDisk){
     vd_buffer.partitions = Vec::new();
+    vd_buffer.used = 0;
 }
 
 fn write_changes(vd_buffer: &mut VirtualDisk, vd: &mut VirtualDisk){
