@@ -10,43 +10,44 @@ pub fn run(vd: &mut VirtualDisk, args: Vec<String>) -> Result<(), String>{
             "-f" => {
                 if let Some(fs) = args.get(i+1){
                     fs_arg = Some(fs.to_string());
-                } else {return Err("gdisk: no filesystems argument was given.".to_string());}
+                } else {return Err("mkfs: no filesystems argument was given.".to_string());}
             },
             "-p" => {
                 if let Some(part) = args.get(i+1){
-                    if part.parse::<u8>().is_err(){return Err("gdisk: invalid partition number.".to_string());}
+                    if part.parse::<u8>().is_err(){return Err("mkfs: invalid partition number.".to_string());}
                     for p in vd.partitions.clone(){
                         if p.number == part.parse().unwrap(){
                             ptn_arg = Some(p.number);
                         }
                     }
-                } else {return Err("gdisk: no partition number was given.".to_string());}
+                } else {return Err("mkfs: no partition number was given.".to_string());}
             },
             "-m" => {
                 if let Some(mp) = args.get(i+1){
                     mp_arg = Some(mp.to_owned());
-                } else {return Err("gdisk: no mountpoint was given.".to_string());}
+                } else {return Err("mkfs: no mountpoint was given.".to_string());}
             },
-            "l" => {
+            "-l" => {
                 println!("
                 ext4
                 fat32
                 btrfs
                 swap
-                ")
+                ");
+                return Ok(());
             }
             _    => {print_help(); return Ok(()); },
         };
     }
 
     if ptn_arg.is_none(){
-        return Err("gdisk: partition number argument missing.".to_string());
+        return Err("mkfs: partition number argument missing.".to_string());
     }
     if fs_arg.is_none(){
-        return Err("gdisk: filesystem argument missing.".to_string());
+        return Err("mkfs: filesystem argument missing.".to_string());
     }
     if mp_arg.is_none(){
-        return Err("gdisk: mount point argument missing".to_string());
+        return Err("mkfs: mount point argument missing".to_string());
     }
 
     let fs_b = match fs_arg.unwrap().as_str() {
@@ -54,7 +55,7 @@ pub fn run(vd: &mut VirtualDisk, args: Vec<String>) -> Result<(), String>{
         "fat32" => FileSystem::Fat32(mp_arg.unwrap()),
         "btrfs" => FileSystem::Btrfs(mp_arg.unwrap()),
         "swap"  => FileSystem::Swap(mp_arg.unwrap()),
-        _       => {return Err("gdisk: unknown filesystem.".to_string());}
+        _       => {return Err("mkfs: unknown filesystem.".to_string());}
     };
 
     for i in 0..vd.partitions.len(){
