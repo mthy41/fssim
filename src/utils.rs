@@ -5,6 +5,17 @@ pub enum ByteScale {
     Byte(i64)
 }
 
+impl ByteScale {
+    pub fn get_bytes(&self) -> i64 {
+        match self{
+            ByteScale::GiB(b)
+            | ByteScale::MiB(b)
+            | ByteScale::KiB(b)
+            | ByteScale::Byte(b) => *b
+        }
+    }
+}
+
 pub fn format_gib(bytes: i64) -> String {
     let gib = bytes/(1024 * 1024 * 1024);
     let mut gib_str = gib.to_string();

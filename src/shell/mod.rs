@@ -11,6 +11,7 @@ pub fn exec_shell(vd: &mut VirtualDisk) -> Result<(), Box<dyn std::error::Error>
     loop {
         user_input(&mut buffer, &pwd)?;
         if buffer.eq("exit") { break; }
+        if buffer.is_empty() { continue; }
 
         let filtered = commands::filter(&buffer);
         if filtered.is_err(){
@@ -20,14 +21,19 @@ pub fn exec_shell(vd: &mut VirtualDisk) -> Result<(), Box<dyn std::error::Error>
         }
 
         match filtered.ok().unwrap() {
-            Command::Lsblk => {_ = commands::lsblk::run(vd); }
+            Command::Lsblk       => {_ = commands::lsblk::run(vd); },
+            Command::Gdisk(args) => {_ = commands::gdisk::run(vd, args); },
+            Command::Mfks(args)  => {_ = commands::mkfs::run(vd, args); },
+            Command::Ls()        => {    commands::ls::run();}
         }
     }
 
     Ok(())
 }
 
-fn user_input(buffer: &mut String, pwd: &String) -> Result<(), std::io::Error>{
+pub fn user_input(buffer: &mut String, pwd: &String) 
+    -> Result<(), std::io::Error>
+{
     let si = stdin();
     print!("{}", pwd);
     std::io::stdout().flush()?;
